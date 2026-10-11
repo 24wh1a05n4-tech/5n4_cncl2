@@ -1,0 +1,1054 @@
+6a) Create custom widgets for UI elements.
+Code:
+import 'package:flutter/material.dart';
+
+// Custom Button Widget
+class CustomButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final Color color;
+
+  const CustomButton({
+    super.key,
+    required this.text, // Fixed: changed 'equired' to 'required'
+    required this.onPressed,
+    this.color = Colors.blue, // default button color
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color, // only set button color
+      ),
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 18, color: Colors.white),
+      ),
+    );
+  }
+}
+
+
+6b  Apply styling using themes and custom styles.
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.redAccent,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+        ),
+        // Fixed: changed 'Theme:' to 'textTheme:'
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
+          headlineMedium: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+          bodyLarge: TextStyle(fontSize: 16, color: Colors.red),
+        ),
+        // Global button theme
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Fixed: Wrapped 'appBar' and 'body' in a Scaffold widget
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Styling with Themes and Custom Styles'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Blue Headline", style: theme.textTheme.headlineLarge),
+            const SizedBox(height: 20),
+            Text("Green Headline", style: theme.textTheme.headlineMedium),
+            const SizedBox(height: 20),
+            Text("Red Body Text", style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text("Themed Button"),
+            ),
+            const SizedBox(height: 20),
+            // Custom styled button
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple, // Custom override
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Custom Colored Button"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+7a) Design a form with various input fields.
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: RegistrationForm(),
+    );
+  }
+}
+
+// Registration Form
+class RegistrationForm extends StatefulWidget {
+  const RegistrationForm({super.key});
+
+  @override
+  State<RegistrationForm> createState() => _RegistrationFormState();
+}
+
+class _RegistrationFormState extends State<RegistrationForm> {
+  String gender = "Male";
+  String course = "CSE";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Registration Form"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          // Added to prevent overflow errors on smaller screens
+          child: Form(
+            child: Column(
+              children: [
+                // Name
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: "Name",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Email
+                const TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Phone Number
+                const TextField(
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: "Phone Number",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Username
+                const TextField(
+                  decoration: InputDecoration(
+                    labelText: "Username",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Password
+                const TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Gender
+                DropdownButtonFormField<String>(
+                  value: gender, // Fixed: changed 'initialValue' to 'value'
+                  decoration: const InputDecoration(
+                    labelText: "Gender",
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      // Fixed: merged 'DropdownMenuIte m' spacing typo
+                      value: "Male",
+                      child: Text("Male"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Female",
+                      child: Text("Female"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      gender = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+
+                // Course
+                DropdownButtonFormField<String>(
+                  value: course, // Fixed: changed 'initialValue' to 'value'
+                  decoration: const InputDecoration(
+                    labelText: "Course",
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "CSE",
+                      child: Text("CSE"),
+                    ),
+                    DropdownMenuItem(
+                      value: "ECE",
+                      child: Text("ECE"),
+                    ),
+                    DropdownMenuItem(
+                      value: "EEE",
+                      child: Text("EEE"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      course = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 15),
+
+                // Register button
+                ElevatedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Registration submitted"),
+                      ),
+                    );
+                  },
+                  child: const Text("Register"),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+7b Implement form validation and error handling.
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: RegistrationForm(),
+      ),
+    );
+
+class RegistrationForm extends StatefulWidget {
+  const RegistrationForm({super.key});
+
+  @override
+  State<RegistrationForm> createState() => _RegistrationFormState();
+}
+
+class _RegistrationFormState extends State<RegistrationForm> {
+  final _formKey = GlobalKey<FormState>();
+  String gender = "Male";
+  String course = "CSE";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Registration Form"),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              const Icon(Icons.person_add, size: 60, color: Colors.deepPurple),
+              const SizedBox(height: 12),
+              
+              // Custom text form fields using our standalone widget class
+              const FormInputField(name: "Name", errorText: "Enter name"),
+              const FormInputField(name: "Email", errorText: "Enter email"),
+              const FormInputField(name: "Phone", errorText: "Enter phone"),
+              const FormInputField(name: "Username", errorText: "Enter username"),
+              
+              TextFormField(
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Password",
+                  border: OutlineInputBorder(),
+                ),
+                validator: (v) =>
+                    v == null || v.length < 6 ? "Minimum 6 characters" : null,
+              ),
+              const SizedBox(height: 12),
+              
+              // Fixed: Explicitly typed DropdownButtonFormField<String>
+              DropdownButtonFormField<String>(
+                value: gender,
+                decoration: const InputDecoration(
+                  labelText: "Gender",
+                  border: OutlineInputBorder(),
+                ),
+                items: ["Male", "Female"]
+                    .map(
+                      (x) => DropdownMenuItem<String>(
+                        value: x,
+                        child: Text(x),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (String? v) => setState(() => gender = v!),
+              ),
+              const SizedBox(height: 12),
+              
+              // Fixed: Explicitly typed DropdownButtonFormField<String>
+              DropdownButtonFormField<String>(
+                value: course,
+                decoration: const InputDecoration(
+                  labelText: "Course",
+                  border: OutlineInputBorder(),
+                ),
+                items: ["CSE", "ECE", "EEE"]
+                    .map(
+                      (x) => DropdownMenuItem<String>(
+                        value: x,
+                        child: Text(x),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (String? v) => setState(() => course = v!),
+              ),
+              const SizedBox(height: 20),
+              
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Registration Successful")),
+                    );
+                  }
+                },
+                child: const Text("REGISTER"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Clean standalone widget instead of helper method to prevent state bugs
+class FormInputField extends StatelessWidget {
+  final String name;
+  final String errorText;
+
+  const FormInputField({
+    super.key,
+    required this.name,
+    required this.errorText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: name,
+          border: const OutlineInputBorder(),
+        ),
+        validator: (v) => v == null || v.isEmpty ? errorText : null,
+      ),
+    );
+  }
+}
+
+
+8a Add animations to UI elements using Flutter animation framework.
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool isAnimated = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("24WH1A05N4"),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "24WH1A05N4",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Tap the box to animate",
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 25),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isAnimated = !isAnimated;
+                  });
+                },
+                // Integrated your exact properties below:
+                child: AnimatedContainer(
+                  duration: const Duration(seconds: 1),
+                  width: isAnimated ? 220 : 120,
+                  height: isAnimated ? 180 : 120,
+                  decoration: BoxDecoration(
+                    color: isAnimated ? Colors.deepPurple : Colors.orange,
+                    borderRadius: BorderRadius.circular(
+                      isAnimated ? 50 : 10,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "SARAH",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+8b Experiment with different types of animations (fade, slide, etc.).
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(), // Best practice: Moves state out of the root configuration
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> fadeAnimation;
+  late Animation<double> scaleAnimation;
+  late Animation<double> rotationAnimation;
+  late Animation<Offset> slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    
+    fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeIn,
+      ),
+    );
+    
+    scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.elasticOut,
+      ),
+    );
+    
+    rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeInOut,
+      ),
+    );
+    
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Curves.easeOutBack,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void startAnimation() {
+    controller.forward(from: 0.0);
+  }
+
+  void reverseAnimation() {
+    controller.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F0FF),
+      appBar: AppBar(
+        title: const Text(
+          "24WH1A05N4",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "SARAH", // Fixed: Added missing title text string
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepPurple,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                "Multiple Explicit Animations",
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 40),
+              
+              // Chained Explicit Transitions
+              FadeTransition(
+                opacity: fadeAnimation,
+                child: SlideTransition(
+                  position: slideAnimation,
+                  child: ScaleTransition(
+                    scale: scaleAnimation,
+                    child: RotationTransition(
+                      turns: rotationAnimation,
+                      child: Container(
+                        width: 190,
+                        height: 190,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Colors.deepPurple,
+                              Colors.blueAccent,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: const [
+                            BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: 3,
+                              offset: Offset(0, 8),
+                              color: Colors.black26,
+                            ),
+                          ],
+                        ),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.flutter_dash,
+                                size: 60,
+                                color: Colors.white,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                "SARAH",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "24WH1A05N4",
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 45),
+              
+              // Action Buttons Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: startAnimation,
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text("Play"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  ElevatedButton.icon(
+                    onPressed: reverseAnimation,
+                    icon: const Icon(Icons.undo),
+                    label: const Text("Reverse"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+9a Fetch data from a REST API.
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: UserPage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class UserPage extends StatefulWidget {
+  const UserPage({super.key});
+
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
+  List<dynamic> users = [];
+  bool isLoading = true;
+
+  Future<void> fetchUsers() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://jsonplaceholder.typicode.com/users'),
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          users = jsonDecode(response.body);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Users-24WH1A05N4'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : users.isEmpty
+              ? const Center(
+                  child: Text('No users found or error loading data'),
+                )
+              : ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final user = users[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        child: Text(user['name']?[0] ?? '?'),
+                      ),
+                      title: Text(user['name'] ?? 'No Name'),
+                      subtitle: Text(user['email'] ?? 'No Email'),
+                    );
+                  },
+                ),
+    );
+  }
+}
+
+
+9b Display the fetched data in a meaningful way in the UI.
+import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<dynamic>> _data;
+
+  @override
+  void initState() {
+    super.initState();
+    // Cache the future in initState to prevent multiple API calls on rebuild
+    _data = ApiService().fetchData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Fetched Data-24WH1A05N4'),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ),
+      body: FutureBuilder<List<dynamic>>(
+        future: _data,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            return ListView.separated(
+              itemCount: snapshot.data!.length,
+              separatorBuilder: (context, index) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final item = snapshot.data![index];
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title'] ?? 'No Title',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['body'] ?? 'No Body',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontSize: 16,
+                            ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          } else {
+            return const Center(child: Text('No data available'));
+          }
+        },
+      ),
+    );
+  }
+}
+
+
+10a Write unit tests for UI components
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        // Fixed: Replaced deprecated 'primarySwatch' with modern seed color configurations
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Demo Home Page'),
+        ),
+        body: Center(
+          child: CustomButton(
+            label: 'Designed Button',
+            onPressed: () {
+              // Handle button press here
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Text(label),
+    );
+  }
+}
+
+
+test/widget_test.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_application_1/main.dart'; // Adjust this package name if your app folder is named differently
+
+void main() {
+  testWidgets(
+    'CustomButton displays correctly and responds to taps',
+    (WidgetTester tester) async {
+      // Define a flag to check if the button is pressed.
+      bool isPressed = false;
+
+      // Build the CustomButton widget inside a MaterialApp template.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CustomButton(
+              label: 'Test Button',
+              onPressed: () {
+                isPressed = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Verify the button text exists initially.
+      expect(find.text('Test Button'), findsOneWidget);
+
+      // Tap the button.
+      await tester.tap(find.text('Test Button'));
+
+      // Rebuild the widget tree after the tap action.
+      await tester.pump();
+
+      // Verify that the button is still displayed after tapping.
+      expect(find.text('Test Button'), findsOneWidget);
+
+      // Verify that the callback flag changed to true.
+      expect(isPressed, isTrue);
+    },
+  );
+}
+
+
+flutter run
