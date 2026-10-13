@@ -1,0 +1,742 @@
+6th exp:
+1. Basic Docker commands
+1. docker --version
+What it does: Displays the installed Docker version.
+Syntax:
+docker --version
+
+
+Expected output:
+Docker version 28.0.4, build b8034c0
+
+
+The version number and build ID may differ.
+2. docker images
+What it does: Displays Docker images stored locally.
+Syntax:
+docker images
+
+
+Expected output:
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        latest    a1b2c3d4e5f6   2 days ago    192MB
+ubuntu       latest    b2c3d4e5f6a7   5 days ago    78MB
+
+
+The output lists the repository, tag, image ID, creation time, and image size.
+3. docker pull
+What it does: Downloads a Docker image from a registry.
+Syntax:
+docker pull <image_name>
+
+
+Example:
+docker pull nginx
+
+
+Expected output:
+Using default tag: latest
+latest: Pulling from library/nginx
+...
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+
+
+If the image already exists locally and is current, Docker may report that the image is up to date.
+4. docker ps -a
+What it does: Lists all containers, including running, stopped, and exited containers.
+Syntax:
+docker ps -a
+
+
+Expected output:
+CONTAINER ID   IMAGE   COMMAND       STATUS                     NAMES
+a1b2c3d4e5f6   nginx   "/docker..."  Exited (0) 2 minutes ago   mynginx
+b2c3d4e5f6a7   nginx   "/docker..."  Up 1 minute                webserver
+
+
+If no containers exist, Docker displays only the column headings.
+5. docker ps
+What it does: Lists only running containers.
+Syntax:
+docker ps
+
+
+Expected output:
+CONTAINER ID   IMAGE   COMMAND       STATUS       PORTS                  NAMES
+b2c3d4e5f6a7   nginx   "/docker..."  Up 1 minute  0.0.0.0:8080->80/tcp   webserver
+
+
+
+2. Container commands
+6. docker run
+What it does: Creates and starts a new container from an image.
+Syntax:
+docker run [OPTIONS] <image_name>
+
+
+Example:
+docker run -d --name mynginx -p 8080:80 nginx
+
+
+Expected output:
+a1b2c3d4e5f67890123456789012345678901234567890123456789012345678
+
+
+Docker normally returns the new container's ID when running in detached mode (-d).
+- -d — runs in the background.
+- --name mynginx — names the container.
+- -p 8080:80 — maps host port 8080 to container port 80.
+If you open http://localhost:8080 while the container is running, you should see the Nginx welcome page.
+7. docker create
+What it does: Creates a container without starting it.
+Syntax:
+docker create --name <container_name> <image_name>
+
+
+Example:
+docker create --name mycontainer nginx
+
+
+Expected output:
+a1b2c3d4e5f6...
+
+
+It returns the container ID. The container remains stopped until you start it.
+8. docker start
+What it does: Starts an existing stopped container.
+Syntax:
+docker start <container_id_or_name>
+
+
+Example:
+docker start mycontainer
+
+
+Expected output:
+mycontainer
+
+
+Docker prints the container name or ID if it starts successfully.
+9. docker stop
+What it does: Gracefully stops a running container.
+Syntax:
+docker stop <container_id_or_name>
+
+
+Example:
+docker stop mynginx
+
+
+Expected output:
+mynginx
+
+
+The container is stopped but not deleted. You can start it again using docker start.
+10. docker kill
+What it does: Sends a kill signal to a running container. By default, it sends SIGKILL.
+Syntax:
+docker kill <container_id_or_name>
+
+
+Example:
+docker kill mynginx
+
+
+Expected output:
+mynginx
+
+
+Difference: docker stop attempts a graceful shutdown; docker kill terminates the container immediately by default.
+11. docker restart
+What it does: Stops and starts a container again.
+Syntax:
+docker restart <container_name>
+
+
+Example:
+docker restart mynginx
+
+
+Expected output:
+mynginx
+
+
+12. docker rm
+What it does: Removes a stopped container.
+Syntax:
+docker rm <container_name>
+
+
+Example:
+docker rm mycontainer
+
+
+Expected output:
+mycontainer
+
+
+
+3. Inspecting and accessing containers
+13. docker inspect
+What it does: Displays detailed information about a container or image.
+Syntax:
+docker inspect <container_name>
+
+
+Example:
+docker inspect mynginx
+
+
+Expected output (simplified):
+[
+  {
+    "Id": "a1b2c3d4e5f6...",
+    "Name": "/mynginx",
+    "State": {
+      "Status": "running",
+      "Running": true
+    },
+    "Config": {
+      "Image": "nginx"
+    }
+  }
+]
+
+
+The actual output contains many more fields, including networking, mounts, configuration, and state.
+14. docker exec
+What it does: Executes a command inside an already-running container.
+Syntax:
+docker exec [OPTIONS] <container_name> <command>
+
+
+Example:
+docker exec -it mynginx /bin/sh
+
+
+Expected output:
+#
+
+
+You may see a shell prompt instead, depending on the image. You can then run commands inside the container.
+To exit the container shell:
+exit
+
+
+Note: /bin/sh must exist in the container. -i keeps input open, and -t allocates a terminal.
+15. docker logs
+What it does: Displays the logs generated by a container.
+Syntax:
+docker logs <container_name>
+
+
+Example:
+docker logs mynginx
+
+
+Expected output (example):
+/docker-entrypoint.sh: Configuration complete; ready for start up
+10.0.0.1 - - "GET / HTTP/1.1" 200
+
+
+The output depends on what the application has written to its logs.
+16. docker stats
+What it does: Displays live resource usage for running containers.
+Syntax:
+docker stats
+
+
+Expected output:
+CONTAINER ID   NAME      CPU %   MEM USAGE / LIMIT   NET I/O
+a1b2c3d4e5f6   mynginx   0.05%   10MiB / 2GiB        1kB / 2kB
+
+
+The figures change as the container uses resources.
+
+4. Image management commands
+17. docker build
+What it does: Builds an image using a Dockerfile.
+Syntax:
+docker build -t <image_name> .
+
+
+Example:
+docker build -t myapp .
+
+
+Expected output (final lines):
+Successfully built a1b2c3d4e5f6
+Successfully tagged myapp:latest
+
+
+Newer Docker versions may display a BuildKit-style summary instead.
+The . means the current directory is the build context.
+18. docker push
+What it does: Uploads a Docker image to a registry.
+Syntax:
+docker push <username>/<image_name>:<tag>
+
+
+Example:
+docker push sarah/myapp:latest
+
+
+Expected output (example):
+The push refers to repository [docker.io/sarah/myapp]
+latest: digest: sha256:... size: ...
+
+
+The image must be tagged appropriately and you must have permission to push to the repository.
+19. docker rmi
+What it does: Removes a local Docker image.
+Syntax:
+docker rmi <image_name>
+
+
+Example:
+docker rmi nginx
+
+
+Expected output (example):
+Untagged: nginx:latest
+Deleted: sha256:a1b2c3d4e5f6...
+
+
+Docker may refuse if the image is still used by a container.
+20. docker cp
+What it does: Copies files between the host and a container.
+Syntax:
+docker cp <source> <destination>
+
+
+Example:
+docker cp index.html mynginx:/usr/share/nginx/html/
+
+
+Expected output: Usually no output if successful.
+
+
+
+
+
+
+
+
+
+
+7th exp:
+7.AIM: Develop a simple containerized application using Docker.
+STEPS: 
+1. Create a directory named todo and move into the directory.
+2. Create the web application using an index.html file.
+The HTML file contains the To-Do List interface with an input field, Add Item button and task list.
+3. Add JavaScript functionality to the application.
+The application allows the user to add new tasks and mark tasks as completed by clicking the Done button.
+Index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basic Todo Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f9;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .student-info {
+      background-color: #e2e8f0;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #334155;
+    }
+    .input-section {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .add-btn {
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      text-align: left;
+    }
+    li {
+      padding: 10px;
+      background: #f8fafc;
+      margin-top: 8px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+    }
+    li.completed span {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+    .done-btn {
+      padding: 4px 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+</body>
+</html>  <div class="container">
+    <div class="student-info">
+      <p>24WH1A05N4</p>
+      <p>SARAH CHRISTINA</p>
+    </div>
+    <h2>My Todo List</h2>
+    <div class="input-section">
+      <input type="text" id="taskInput" placeholder="What to do next?" required>
+      <button class="add-btn" onclick="addNewItem()">Add Item</button>
+    </div>
+    <ul id="todoList"></ul>
+  </div>
+  <script>
+    function addNewItem() {
+      const inputField = document.getElementById('taskInput');
+      const taskText = inputField.value.trim();
+      if (taskText === "") { return; }
+      const listContainer = document.getElementById('todoList');
+      const listItem = document.createElement('li');
+      const textSpan = document.createElement('span');
+      textSpan.textContent = taskText;
+      const doneButton = document.createElement('button');
+      doneButton.textContent = "Done";
+      doneButton.className = "done-btn";
+      doneButton.onclick = function() { listItem.classList.toggle('completed'); };
+      listItem.appendChild(textSpan);
+      listItem.appendChild(doneButton);
+      listContainer.appendChild(listItem);
+      inputField.value = "";
+      inputField.focus();
+    }
+  </script>
+</body>
+</html>
+
+
+Index.js
+const express = require('express');
+const path = require('path');
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+let todos = [];
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index_n4.html'));
+});
+app.get('/api/todos', (req, res) => {
+  res.json(todos);
+});
+app.post('/api/todos', (req, res) => {
+  const todo = req.body.todo;
+  if (todo) { todos.push(todo); }
+  res.redirect('/');
+});
+app.listen(3000, () => {
+  console.log('Todo application listening on port 3000');
+});
+
+Package.json
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "main": "index_n4.js",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
+4. Build the Docker image using the following command:
+docker build -t n4program7 .
+5. Run the Docker container using the created image.
+docker run -d -p 3000:3000 --name program7-container n4program7
+The container is started and port 3000 of the host is mapped to port 3000 of the container.
+6. Check the container logs to verify that the application is running.
+docker logs program7-container
+7. Open the application in a web browser
+After verifying the Docker image and container, open the application using:
+http://localhost:3000
+8. Verify the Docker image
+Open Docker Desktop → Images → Local and verify that the n4program7 image has been created successfully.
+9. Verify the Docker container
+Open Docker Desktop → Containers and verify that program7-container is running
+
+
+
+
+
+
+
+
+
+
+
+
+9th exp:
+explanation
+The pipeline should look like this:
+Job 1
+Pull & copy
+
+Job 2
+Deploy
+
+
+Job 3
+Test URLs
+
+Job 4
+Monitor pods
+
+
+Green means the job completed successfully. The build trigger configuration connects the jobs.
+
+Step 1 — Start the required services
+Your record assumes Jenkins and Kubernetes are already installed and configured.
+On the lab machine, check that Jenkins is running. On a Linux system that uses systemd, you can use:
+sudo systemctl restart jenkins
+sudo systemctl status jenkins
+
+
+Open the Jenkins dashboard in your browser using your lab's configured URL.
+Next, verify the other prerequisites:
+sudo kubectl get pods
+sudo kubectl get nodes
+
+
+If Kubernetes is unavailable or the required cluster isn't ready, Jobs 2–4 may fail even if Job 1 succeeds.
+Step 2 — Prepare the GitHub repository
+Your repository should contain the files needed for both applications, including the relevant Kubernetes YAML files.
+A structure consistent with your scripts is:
+repository/
+├── html-app/
+│   └── html-pod-pvc.yml
+├── php-app/
+│   └── php-pod-pvc.yml
+└── Exp1reg.html
+
+
+The actual HTML and PHP files, plus any other files referenced by the YAML, must also be present.
+Important: Your Job 2 script checks for html-app or Exp1reg.html at the top level and separately checks for php-app. If those names or paths differ in your GitHub repository, the deployment script must be adjusted to match.
+Step 3 — Create Job 1 in Jenkins
+1. From the Jenkins dashboard, click New Item.
+2. Enter the name Job1.
+3. Select Freestyle project, then click OK.
+4. Under Source Code Management, select Git.
+5. Enter your repository's HTTPS or SSH URL and configure credentials if the repository is private.
+6. Under Build Triggers, select GitHub hook trigger for GITScm polling if you are using a GitHub webhook.
+7. Under Build Steps, select Execute shell.
+8. Paste the Job 1 script:
+mkdir -p /tmp/devOpsTask
+rm -rf /tmp/devOpsTask/*
+cp -rf * /tmp/devOpsTask/
+
+
+9. Click Save.
+10. Click Build Now, then open Console Output.
+Expected: Job 1 shows a blue or green successful build indicator, depending on your Jenkins theme. The console should show that the build finished successfully.
+Important: This script copies the current Jenkins workspace to /tmp/devOpsTask. Jenkins must already have checked out the repository for it to copy the intended files.
+Step 4 — Create Job 2
+1. Return to the dashboard and click New Item.
+2. Enter Job2.
+3. Select Freestyle project and click OK.
+4. Under Build Triggers, select Build after other projects are built.
+5. Enter Job1 as the upstream project and configure it to run after a successful build.
+6. Under Build Steps, choose Execute shell.
+7. Paste your HTML and PHP deployment script from above.
+8. Click Save.
+Before building Job 2, verify the deployment prerequisites:
+sudo kubectl get pods
+sudo kubectl get nodes
+
+
+Check that the YAML files are present and valid. Also verify that the cluster has access to the images referenced by those YAML files and that Jenkins can run kubectl with the correct cluster credentials.
+Expected: Job 2 should apply the YAML resources and copy the application files into the intended pods.
+If Job 2 turns red, inspect its Console Output. A successful Job 1 does not guarantee that Kubernetes deployment will work.
+Step 5 — Create Job 3
+1. Create another Freestyle project named Job3.
+2. Under Build Triggers, select Build after other projects are built and specify Job2.
+3. Under Build Steps, select Execute shell.
+4. Paste your Job 3 HTTP testing script.
+5. Under Post-build Actions, configure the email notification action if it is available in your Jenkins installation.
+6. Enter the required recipient and configure the Jenkins email settings if they haven't already been set up.
+7. Save the job.
+Your test script checks these two URLs:
+- http://localhost:30002/html-app/
+- http://localhost:30005/php-app/
+Both must return HTTP 200 for Job 3 to pass.
+Important: localhost means the machine on which the Jenkins shell command executes. If your NodePorts are exposed on a different machine or the Kubernetes networking configuration doesn't make them available there, the tests will fail even when the pods are running.
+You can investigate the URLs manually from the same machine that runs the Jenkins job:
+curl -i http://localhost:30002/html-app/
+curl -i http://localhost:30005/php-app/
+
+
+Look for HTTP/1.1 200 or the equivalent HTTP/2 status in each response.
+Step 6 — Create Job 4
+1. Create a Freestyle project named Job4.
+2. Under Build Triggers, select Build after other projects are built and enter Job3.
+3. Also select Build periodically and enter this schedule to check once every minute:
+   * * * * *
+4. Under Build Steps → Execute shell, paste your monitoring script:
+   if sudo kubectl get pods | grep html-pod | grep Running
+   then
+       if sudo kubectl get pods | grep php-pod | grep Running
+       then
+           exit 0
+       else
+           exit 1
+       fi
+   else
+       exit 1
+   fi
+5. Under Post-build Actions, configure Trigger parameterized build on other projects, if that plugin is installed.
+6. Select Job2 as the downstream project, and configure it to trigger when Job4 fails or is unstable.
+7. Save the job.
+Expected: Job4 passes when both html-pod and php-pod are reported as Running.
+One detail to remember: a periodic build runs independently of the upstream chain. Your Jenkins configuration should avoid unnecessary overlapping builds or repeated redeployment loops.
+Step 7 — Display the four jobs in a green pipeline
+If your faculty expects the graphical Build Pipeline view:
+1. Go to Manage Jenkins → Plugins and install the Build Pipeline plugin if it isn't already installed.
+2. Return to the dashboard and click New Item.
+3. Give the view a name, such as Experiment9-Pipeline.
+4. Choose Build Pipeline View if that option is available.
+5. Set Job1 as the initial job.
+6. Save the view and open it.
+7. Trigger Job1 and follow the chain through Job2, Job3, and Job4.
+If your installation uses a different pipeline-view plugin, the menu labels may differ slightly.
+Step 8 — Troubleshooting if a job turns red
+Job	What to check first
+Job1	Git URL, credentials, repository checkout, workspace files
+Job2	YAML paths, Kubernetes access, pod names, kubectl cp errors
+Job3	Whether both URLs return HTTP 200 from the Jenkins machine
+Job4	Whether both pods exist and are in Running state
+
+
+
+
+Job 1: Pull and copy the GitHub code
+mkdir -p /tmp/devOpsTask
+rm -rf /tmp/devOpsTask/*
+cp -rf * /tmp/devOpsTask/
+
+
+Remember: Create → Clear → Copy
+- mkdir -p creates the deployment folder if it doesn't exist.
+- rm -rf removes the old contents.
+- cp -rf copies the current repository files into the folder.
+Job 2: Deploy the HTML and PHP applications
+Your script has two parts.
+Part A — HTML application
+if ls /tmp/devOpsTask/ | grep -E "html-app|Exp1reg.html"
+then
+    sudo kubectl apply -f /tmp/devOpsTask/html-app/html-pod-pvc.yml || true
+    sleep 10
+    sudo kubectl cp /tmp/devOpsTask/. html-pod:/var/www/html/ || true
+else
+    echo "No HTML files or folder present"
+fi
+
+
+Part B — PHP application
+if ls /tmp/devOpsTask/ | grep php-app
+then
+    sudo kubectl apply -f /tmp/devOpsTask/php-app/php-pod-pvc.yml || true
+    sleep 10
+    sudo kubectl cp /tmp/devOpsTask/php-app/. php-pod:/var/www/html/ || true
+else
+    echo "No PHP folder present"
+fi
+
+
+Remember: Check → Apply → Wait → Copy
+- if checks whether the application files exist.
+- grep searches for the expected name.
+- kubectl apply creates or updates Kubernetes resources.
+- sleep 10 waits 10 seconds.
+- kubectl cp copies application files into the pod.
+- else prints a message when the folder isn't found.
+|| true allows the script to continue even if that command fails; it does not mean the deployment succeeded.
+Job 3: Test the applications
+html_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:30002/html-app/)
+php_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:30005/php-app/)
+
+if [ $html_status == 200 ]
+then
+    if [ $php_status == 200 ]
+    then
+        exit 0
+    else
+        exit 1
+    fi
+else
+    exit 1
+fi
+
+
+Remember: Request → Get status → Check 200 → Pass or fail
+- curl sends an HTTP request.
+- -s suppresses normal progress output.
+- -o /dev/null discards the response body.
+- -w "%{http_code}" prints the HTTP status code.
+- 200 means the HTTP request succeeded.
+- exit 0 means the job succeeds.
+- exit 1 means the job fails.
+Both applications must return status 200 for this script to succeed.
+Job 4: Monitor Kubernetes pods
+if sudo kubectl get pods | grep html-pod | grep Running
+then
+    if sudo kubectl get pods | grep php-pod | grep Running
+    then
+        exit 0
+    else
+        exit 1
+    fi
+else
+    exit 1
+fi
+
+
+Remember: Check HTML → Check PHP → Pass or fail
+- kubectl get pods lists Kubernetes pods.
+- grep html-pod searches for the HTML pod.
+- grep php-pod searches for the PHP pod.
+- grep Running checks for the Running status.
+- exit 0 indicates success if both checks pass.
+- exit 1 indicates failure if either check fails.
+
+
+
+10th exp
