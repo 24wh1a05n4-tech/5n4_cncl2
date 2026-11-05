@@ -1,0 +1,689 @@
+1b: dart porogram to undersatnd language basics
+void main() {
+  String name = 'Ananya';
+  int age = 20;
+  double height = 5.4;
+  bool isAdult = age >= 18;
+
+  print('Name: $name');
+  print('Age: $age');
+  print('Height: $height');
+
+  if (isAdult) {
+    print('$name is an adult.');
+  } else {
+    print('$name is not an adult.');
+  }
+
+  greet(name);
+
+  for (int i = 1; i <= 5; i++) {
+    print('Loop iteration $i');
+  }
+
+  List<String> friends = ['Divya', 'Kavya', 'Priya', 'Sravani', 'Nandini'];
+
+  for (String friend in friends) {
+    print('Hello, $friend!');
+  }
+
+  Person person = Person(name, age, height);
+  person.introduce();
+}
+
+void greet(String name) {
+  print('Welcome to Dart, $name!');
+}
+
+class Person {
+  String name;
+  int age;
+  double height;
+
+  Person(this.name, this.age, this.height);
+
+  void introduce() {
+    print('My name is $name. I am $age years old and my height is $height feet.');
+  }
+}
+
+
+
+
+
+2a)Explore various Flutter widgets (Text, Image, Container, etc.).
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Text, Image And Container Demo',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Text, Local & Network Images'),
+          backgroundColor: Colors.deepPurple,
+        ),
+        body: Center(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.lightBlue[50],
+              border: Border.all(color: Colors.blue, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Flutter Image Example',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text('Local Image:', style: TextStyle(fontSize: 18)),
+                Image.asset(
+                  'assets/pexels-mikebirdy-810357.jpg',
+                  width: 150,
+                  height: 150,
+                ),
+                SizedBox(height: 20),
+                Text('Network Image:', style: TextStyle(fontSize: 18)),
+                Image.network(
+                  'https://pexels.com',
+                  width: 150,
+                  height: 150,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+2b)Implement different layout structures using Row, Column, and Stack widgets.
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Layout Demo'),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Column Layout',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 340, // Increased from 180 to fit three 100-height boxes
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildBox(Colors.red),
+                    _buildBox(Colors.green),
+                    _buildBox(Colors.blue),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Row Layout',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildBox(Colors.red),
+                    _buildBox(Colors.green),
+                    _buildBox(Colors.blue),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Stack Layout',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 90,
+                        height: 90,
+                        color: Colors.tealAccent,
+                      ),
+                      Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.limeAccent,
+                      ),
+                      Container(
+                        width: 30,
+                        height: 30,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBox(Color color) {
+    return Container(
+      width: 100,
+      height: 100,
+      color: color,
+    );
+  }
+}
+
+
+
+ different screens
+3a) responsive ui
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ResponsivePage(),
+    );
+  }
+}
+
+class ResponsivePage extends StatelessWidget {
+  const ResponsivePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Simple Responsive UI')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Calculate the height needed for the column content
+          // Two images (300 + 300) = 600 vertical pixels
+          final isSmallWidth = constraints.maxWidth < 600;
+          final isSmallHeight = constraints.maxHeight < 600;
+
+          // Render a scrollable view if the screen is too small in either direction
+          if (isSmallWidth || isSmallHeight) {
+            return SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/images/download (1).jpeg',
+                      width: 300,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    ),
+                    Image.asset(
+                      'assets/images/download.jpeg',
+                      width: 300,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            // Large screen: center Row layout
+            return Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/download (1).jpeg',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
+                  Image.asset(
+                    'assets/images/download.jpeg',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.cover,
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget myBox(String text, Color color) {
+    return Container(
+      height: 150,
+      width: 150,
+      margin: const EdgeInsets.all(10),
+      color: color,
+      child: Center(
+        child: Text(text, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+3b)media quesries
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Get screen size and orientation
+    final Size screenSize = MediaQuery.sizeOf(context);
+    final Orientation orientation = MediaQuery.orientationOf(context);
+    final double width = screenSize.width;
+
+    // Determine view type based on width
+    final String viewType;
+    if (width < 600) {
+      viewType = 'Mobile View';
+    } else if (width < 1024) {
+      viewType = 'Tablet View';
+    } else {
+      viewType = 'Desktop View';
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('MediaQuery + Breakpoints')),
+      body: Container(
+        color: Colors.lightBlue,
+        child: Center(
+          child: Text(
+            'Responsive Layout Example\n\n'
+            'View Type: $viewType\n'
+            'Screen Width: ${width.toStringAsFixed(2)}\n'
+            'Screen Height: ${screenSize.height.toStringAsFixed(2)}\n'
+            'Orientation: $orientation',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+4a) navigation between screens
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Navigation Basics',
+      home: FirstRoute(),
+    );
+  }
+}
+
+class FirstRoute extends StatelessWidget {
+  const FirstRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Route'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SecondRoute(),
+              ),
+            );
+          },
+          child: const Text('Open Second Route'),
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go Back'),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+4b)navigation with named routes
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Navigation with Named Routes',
+      initialRoute: '/', // Starting screen
+      routes: {
+        '/': (context) => const FirstRoute(), // First route (home)
+        '/second': (context) => const SecondRoute(), // Second route
+        '/third': (context) => const ThirdRoute(), // Third route
+      },
+    );
+  }
+}
+
+// FirstRoute (Home Screen)
+class FirstRoute extends StatelessWidget {
+  const FirstRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Route'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Navigate to the second route using the name
+            Navigator.pushNamed(context, '/second');
+          },
+          child: const Text('Go to Second Route'),
+        ),
+      ),
+    );
+  }
+}
+
+// SecondRoute
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Navigate to the third route using the name
+            Navigator.pushNamed(context, '/third');
+          },
+          child: const Text('Go to Third Route'),
+        ),
+      ),
+    );
+  }
+}
+
+// ThirdRoute
+class ThirdRoute extends StatelessWidget {
+  const ThirdRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Third Route'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Go back to the first route using the Navigator
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          },
+          child: const Text('Go Back to First Route'),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+5a)statemangament using setstate
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+// Root is StatelessWidget
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CounterPage(),
+    );
+  }
+}
+
+// CounterPage is StatefulWidget
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key});
+
+  @override
+  State<CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<CounterPage> {
+  int counter = 0;
+
+  void increment() {
+    setState(() {
+      counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Stateless + Stateful Counter - 24WH1A05M4"),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Text(
+          "Counter: $counter",
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: increment,
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+
+
+
+5b) Implement state management using set State and Provider.
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CounterModel(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+// Root is StatelessWidget
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CounterPage(),
+    );
+  }
+}
+
+// Provider class (state management)
+class CounterModel extends ChangeNotifier {
+  int counter = 0;
+
+  void increment() {
+    counter++;
+    notifyListeners(); // notifies UI to rebuild
+  }
+}
+
+// CounterPage (StatelessWidget, listens to Provider)
+class CounterPage extends StatelessWidget {
+  const CounterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final counter = context.watch<CounterModel>().counter;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Provider Counter"),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Text(
+          "Counter: $counter",
+          style: const TextStyle(fontSize: 24),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.read<CounterModel>().increment(),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
